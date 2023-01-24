@@ -107,5 +107,9 @@ in {
 
       cp ${mkGrubFont sansSerif} $out/sans_serif.pf2
     '';
+
+    extraConfig = ''
+      set theme=($drive2)/boot/theme/theme.txt
+    '';
   };
 }
