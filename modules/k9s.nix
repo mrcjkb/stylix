@@ -10,6 +10,15 @@ let
     };
   };
 
+  yaml2attrs = yaml: builtins.fromJSON (builtins.readFile (pkgs.stdenv.mkDerivation {
+    name = "fromYAML";
+    phases = [ "buildPhase" ];
+    buildPhase = "${pkgs.yaml2json}/bin/yaml2json < ${yaml} > $out";
+  }));
+
+  skinAttrs = yaml2attrs skinFile;
+
+
 in {
   options.stylix.targets.k9s.enable =
     config.lib.stylix.mkEnableTarget "k9s" true;
@@ -17,11 +26,7 @@ in {
   config = lib.mkIf config.stylix.targets.k9s.enable {
 
     home-manager.sharedModules = [{
-      # Make sure there's no conflicting config
-      programs.k9s.skin = null;
-      xdg.configFile."k9s/skin" = {
-        source = skinFile;
-      };
+      programs.k9s.skin = skinAttrs;
     }];
   };
 }
